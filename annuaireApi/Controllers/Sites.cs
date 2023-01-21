@@ -23,33 +23,36 @@ namespace annuaireApi.Controllers
         }
 
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Site>>> GetSites()
+        public async Task<ActionResult<IEnumerable<Site>>> getAllSites()
         {
             return await _context.Site.ToListAsync();
         }
 
 
-
-
-
-        // GET: api/values
-      //  [HttpGet]
-       // public IEnumerable<string> Get()
-      //  {
-      //      return new List<String> (){ "value1", "value2" };
-      //  }
-
         // GET api/values/5
         [HttpGet("{id}")]
-        public string Get(int id)
+        public async Task<ActionResult<Site>> getSiteById(int id)
         {
-            return "value";
+            var site = await _context.Site.Where(s => s.id.Equals(id)).FirstOrDefaultAsync();
+            if (site == null)
+            {
+                return NotFound();
+            }
+            else
+            {
+                return site;
+            }
         }
 
         // POST api/values
         [HttpPost]
-        public void Post([FromBody]string value)
+        public async Task<ActionResult<Site>> addOneSite(Site site)
         {
+            // vérifier les données reçues du navigateur ...
+            // ...
+            _context.Site.Add(site);
+            await _context.SaveChangesAsync();
+            return CreatedAtAction(nameof(addOneSite),new { id = site.id}, site);
         }
 
         // PUT api/values/5
@@ -60,8 +63,16 @@ namespace annuaireApi.Controllers
 
         // DELETE api/values/5
         [HttpDelete("{id}")]
-        public void Delete(int id)
+        public async Task<IActionResult> deleteSite(int id)
         {
+            var site = await _context.Site.FindAsync(id);
+            if(site == null)
+            {
+                return NotFound(nameof(deleteSite));
+            }
+            _context.Site.Remove(site);
+            await _context.SaveChangesAsync();
+            return NoContent();
         }
     }
 }
