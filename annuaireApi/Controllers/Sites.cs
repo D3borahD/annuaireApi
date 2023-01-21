@@ -2,21 +2,42 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using annuaireApi.models;
+using annuaireApi.Models;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
 namespace annuaireApi.Controllers
 {
+    [ApiController]
     [Route("api/[controller]")]
-    public class Site : Controller
+    public class SitesController : ControllerBase
     {
-        // GET: api/values
-        [HttpGet]
-        public IEnumerable<string> Get()
+        private readonly AnnuaireApiContext _context;
+
+        public SitesController(AnnuaireApiContext context)
         {
-            return new List<String> (){ "value1", "value2" };
+            _context = context;
         }
+
+        [HttpGet]
+        public async Task<ActionResult<IEnumerable<Site>>> GetSites()
+        {
+            return await _context.Site.ToListAsync();
+        }
+
+
+
+
+
+        // GET: api/values
+      //  [HttpGet]
+       // public IEnumerable<string> Get()
+      //  {
+      //      return new List<String> (){ "value1", "value2" };
+      //  }
 
         // GET api/values/5
         [HttpGet("{id}")]
